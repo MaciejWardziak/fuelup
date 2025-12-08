@@ -1,0 +1,11 @@
+fastapi==0.122.0
+uvicorn==0.38.0
+SQLAlchemy==2.0.44
+psycopg2-binary==2.9.11
+python-dotenv==1.2.1
+pydantic-settings==2.11.0
+
+requests==2.32.5
+beautifulsoup4==4.14.2
+schedule==1.2.1
+tzlocal==5.3.1

@@ -21,6 +21,7 @@ class StationRead(BaseModel):
     name: str
     address: Optional[str] = None
     website_url: Optional[str] = None
+    last_updated: Optional[datetime] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     prices: List[FuelPriceRead] = []

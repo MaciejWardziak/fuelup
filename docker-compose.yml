@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: fuelup_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fuelup_user
+      POSTGRES_PASSWORD: fuelup
+      POSTGRES_DB: fuelup_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - fuelup_data:/var/lib/postgresql/data
+
+volumes:
+  fuelup_data:

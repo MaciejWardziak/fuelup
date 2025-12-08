@@ -19,11 +19,17 @@ def scrape_station_prices(url: str):
     # ON (diesel)
     on_elem = soup.select_one("li.on.b7")
     if on_elem and on_elem.text.strip():
-        prices.append({"fuel": "on", "price": float(on_elem.text.strip().replace(",", "."))})
+        try:
+            prices.append({"fuel": "on", "price": float(on_elem.text.strip().replace(",", "."))})
+        except ValueError:
+            print(f"Nie udało się sparsować ceny ON: {on_elem.text.strip()}")
 
     # Pb95 (benzyna)
-    pb95_elem = soup.select_one("li.pb95.e10")
+    pb95_elem = soup.select_one("li.pb95")
     if pb95_elem and pb95_elem.text.strip():
-        prices.append({"fuel": "pb95", "price": float(pb95_elem.text.strip().replace(",", "."))})
+        try:
+            prices.append({"fuel": "pb95", "price": float(pb95_elem.text.strip().replace(",", "."))})
+        except ValueError:
+            print(f"Nie udało się sparsować ceny Pb95: {pb95_elem.text.strip()}")
 
     return prices
