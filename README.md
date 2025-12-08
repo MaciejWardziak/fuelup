@@ -6,7 +6,7 @@ FuelUp to prototyp aplikacji webowej umożliwiającej sprawdzanie informacji o c
 
 ## Pobranie repozytorium GitHub
 
-`git clone --branch develop https://github.com/MaciejWardziak/fuelup/.git`
+`git clone --branch develop https://github.com/MaciejWardziak/fuelup.git`
 
 
 ---
