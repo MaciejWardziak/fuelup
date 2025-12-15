@@ -117,19 +117,21 @@ POSTGRES_PORT=5432 #lub 5433
 
 3. Uruchom setup:
 
-`./setup.sh`
+`bash setup.sh`
 
 
-Skrypt wykona następujące kroki:  
-- Uruchomi **Docker i PostgreSQL**  
-- Utworzy wirtualne środowisko Pythona w `backend/venv`  
-- Zainstaluje zależności backendu (`pip install -r backend/requirements.txt`)  
-- Wykona `populate.py` w celu utworzenia początkowych danych w bazie  
-- Zainstaluje zależności frontendu (`npm install`)  
-- Uruchomi backend FastAPI w osobnym terminalu  
-- Uruchomi frontend Vite w osobnym terminalu  
-
+Skrypt uruchomi bazę danych, wirtualne środowisko, zainstaluje zależności, stworzy migracje i początkowe dane. Na koniec uruchomi backend i frontend.
 Po uruchomieniu backend będzie dostępny pod `http://localhost:8000`, a frontend pod adresem podanym przez Vite (domyślnie `http://localhost:5173`).
+
+Do kolejnych uruchomień, o ile nie zmieniłeś zależności, używaj `run.sh`.
+
+1. Pierw nadaj uprawnienia:
+
+`chmod +x run.sh`
+
+2. Później uruchom:
+
+`bash run.sh`
 
 ---
 
