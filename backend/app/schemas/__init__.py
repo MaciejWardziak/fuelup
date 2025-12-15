@@ -14,6 +14,7 @@ from .station_opening_hours import (
     StationOpeningHoursBase, 
     StationOpeningHoursCreate, 
     StationOpeningHoursRead,
+    StationOpeningHoursUpdate
 )
 __all__ = [
     "StationBase",
@@ -26,4 +27,5 @@ __all__ = [
     "StationOpeningHoursBase",
     "StationOpeningHoursCreate",
     "StationOpeningHoursRead",
+    "StationOpeningHoursUpdate",
 ]

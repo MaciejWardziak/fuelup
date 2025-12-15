@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Numeric, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Numeric, DateTime, JSON
 from sqlalchemy.orm import relationship
 from app.core.db import Base
 from datetime import datetime
@@ -13,6 +13,11 @@ class Station(Base):
     last_updated = Column(DateTime, default=None)
     lat = Column(Float)
     lng = Column(Float)
+    scraper_config = Column(JSON, nullable=True, default=None)
+    # Przykład wartości:
+    # {"type": "list"}                                      # E.Leclerc
+    # {"type": "table"}                                     # stacja z tabelą
+    # {"type": "text", "filter_by_city": true}              # Rolmasz
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

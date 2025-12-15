@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import time, datetime
+from typing import Optional
 
 class StationOpeningHoursBase(BaseModel):
     day_of_week: str
@@ -17,3 +18,8 @@ class StationOpeningHoursRead(StationOpeningHoursBase):
 
     class Config:
         orm_mode = True
+
+class StationOpeningHoursUpdate(StationOpeningHoursBase):
+    day_of_week: Optional[str] = None
+    open_time: Optional[time] = None
+    close_time: Optional[time] = None
