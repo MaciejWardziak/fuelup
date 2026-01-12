@@ -15,6 +15,7 @@ class FuelPriceRead(BaseModel):
     fuel_type: str
     price: float
     created_at: datetime
+    updated_at: datetime
 
     class Config:
         orm_mode = True

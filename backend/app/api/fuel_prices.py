@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, extract, text
 from typing import List
+from datetime import datetime
 from app.core.db import get_db
 from app.models.fuel_price import FuelPrice
 from app.models.station import Station
@@ -12,7 +13,6 @@ router = APIRouter(
     tags=["Fuel Prices"],
 )
 
-# CREATE – tylko dodawanie nowej ceny (przez scraper lub admina)
 @router.post("/{station_id}", response_model=FuelPriceRead, status_code=status.HTTP_201_CREATED)
 def add_fuel_price(
     station_id: int,
@@ -21,20 +21,44 @@ def add_fuel_price(
 ):
     station = db.query(Station).filter(Station.id == station_id).first()
     if not station:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="station_not_found"
-        )
+        raise HTTPException(status_code=404, detail="station_not_found")
 
-    price = FuelPrice(
-        station_id=station_id,
-        fuel_type=data.fuel_type,
-        price=data.price,
+    print(f"[DEBUG] Próba dodania ceny: station_id={station_id}, fuel_type={data.fuel_type}, price={data.price} (type: {type(data.price)})")
+
+    today_start = func.date_trunc('day', func.now())
+
+    existing_today = (
+        db.query(FuelPrice)
+        .filter(
+            FuelPrice.station_id == station_id,
+            FuelPrice.fuel_type == data.fuel_type,
+            FuelPrice.created_at >= today_start,
+        )
+        .order_by(FuelPrice.created_at.desc())
+        .first()
     )
-    db.add(price)
-    db.commit()
-    db.refresh(price)
-    return price
+
+    if existing_today:
+        print(f"[DEBUG] Znaleziono istniejący rekord ID={existing_today.id}")
+        print(f"  Baza: price={existing_today.price} (type: {type(existing_today.price)})")
+        print(f"  Request: price={data.price} (type: {type(data.price)})")
+
+        existing_today.price = data.price
+        existing_today.updated_at = datetime.utcnow()
+        db.commit()
+        print("[DEBUG] Cena zaktualizowana")
+        return existing_today
+    else:
+        print("[DEBUG] Nie znaleziono rekordu z dziś – dodaję nowy")
+        new_price = FuelPrice(
+            station_id=station_id,
+            fuel_type=data.fuel_type,
+            price=data.price,
+        )
+        db.add(new_price)
+        db.commit()
+        db.refresh(new_price)
+        return new_price
 
 
 # READ – ceny dla konkretnej stacji (wszystkie historyczne)

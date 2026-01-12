@@ -25,7 +25,7 @@ def create_station(station: StationCreate, db: Session = Depends(get_db)):
 def get_stations(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=500),
+    limit: int = Query(100, ge=1, le=100),
     search: Optional[str] = Query(None, description="Szukaj po nazwie lub adresie"),
     lat: Optional[float] = Query(None),
     lng: Optional[float] = Query(None),

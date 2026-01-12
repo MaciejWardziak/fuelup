@@ -16,6 +16,12 @@ from .station_opening_hours import (
     StationOpeningHoursRead,
     StationOpeningHoursUpdate
 )
+
+from .fuel_price_archive import (
+    FuelPriceArchiveBase,
+    FuelPriceArchiveCreate,
+    FuelPriceArchiveRead
+)
 __all__ = [
     "StationBase",
     "StationCreate",
@@ -28,4 +34,7 @@ __all__ = [
     "StationOpeningHoursCreate",
     "StationOpeningHoursRead",
     "StationOpeningHoursUpdate",
+    "FuelPriceArchiveBase",
+    "FuelPriceArchiveCreate",
+    "FuelPriceArchiveRead",
 ]

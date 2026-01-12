@@ -60,3 +60,46 @@ export async function getStationFullData(id: number): Promise<StationFullData | 
     return null;
   }
 }
+
+export async function getRecentPrices(stationId: number): Promise<FuelPrice[]> {
+  try {
+    const response = await fetch(`${API_URL}/prices/${stationId}`);
+    return response.ok ? await response.json() : [];
+  } catch (err) {
+    console.error("Błąd pobierania cen bieżących:", err);
+    return [];
+  }
+}
+
+// Pomocnicza funkcja do pobierania cen archiwalnych (starsze niż 30 dni)
+export async function getArchivedPrices(stationId: number): Promise<FuelPrice[]> {
+  try {
+    const response = await fetch(`${API_URL}/archive/${stationId}`);
+    return response.ok ? await response.json() : [];
+  } catch (err) {
+    console.error("Błąd pobierania archiwum:", err);
+    return [];
+  }
+}
+
+// GŁÓWNA FUNKCJA DLA WYKRESU
+export async function getFullPriceHistory(stationId: number): Promise<FuelPrice[]> {
+  try {
+    // Pobieramy oba źródła jednocześnie dla szybkości
+    const [recent, archived] = await Promise.all([
+      getRecentPrices(stationId),
+      getArchivedPrices(stationId)
+    ]);
+
+    // Łączymy tablice
+    const combined = [...recent, ...archived];
+
+    // Opcjonalnie: Usuwanie duplikatów po ID (na wypadek, gdyby ten sam rekord był w obu tabelach)
+    const unique = Array.from(new Map(combined.map(item => [item.id, item])).values());
+
+    return unique;
+  } catch (err) {
+    console.error("Błąd podczas łączenia historii:", err);
+    return [];
+  }
+}
