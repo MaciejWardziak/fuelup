@@ -78,40 +78,65 @@ def get_fuel_prices_for_station(
     return prices  # pusta lista jeśli brak
 
 
-# READ – tylko najnowsze ceny dla stacji (najważniejszy endpoint!)
+from decimal import Decimal
+
 @router.get("/latest/{station_id}", response_model=List[FuelPriceRead])
 def get_latest_fuel_prices(
     station_id: int,
     db: Session = Depends(get_db),
 ):
-    if not db.query(Station.id).filter(Station.id == station_id).scalar():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="station_not_found"
+    # Pobieramy unikalne typy paliw
+    fuel_types = db.query(FuelPrice.fuel_type).filter(
+        FuelPrice.station_id == station_id
+    ).distinct().all()
+    
+    fuel_types = [f[0] for f in fuel_types]
+    results = []
+
+    for f_type in fuel_types:
+        # Pobieramy 2 najnowsze rekordy, sortując po ID i dacie
+        # To ważne: jeśli created_at jest identyczne, ID nam powie, który był drugi
+        latest_two = (
+            db.query(FuelPrice)
+            .filter(FuelPrice.station_id == station_id, FuelPrice.fuel_type == f_type)
+            .order_by(FuelPrice.created_at.desc(), FuelPrice.id.desc())
+            .limit(2)
+            .all()
         )
 
-    # Efektywne zapytanie: najnowsza cena dla każdego fuel_type
-    subquery = (
-        db.query(
-            FuelPrice.fuel_type,
-            func.max(FuelPrice.created_at).label("max_created_at")
-        )
-        .filter(FuelPrice.station_id == station_id)
-        .group_by(FuelPrice.fuel_type)
-        .subquery()
-    )
+        if not latest_two:
+            continue
 
-    latest_prices = (
-        db.query(FuelPrice)
-        .join(
-            subquery,
-            and_(
-                FuelPrice.fuel_type == subquery.c.fuel_type,
-                FuelPrice.created_at == subquery.c.max_created_at,
-            )
-        )
-        .filter(FuelPrice.station_id == station_id)
-        .all()
-    )
+        current = latest_two[0]
+        trend = "equal"
+        change = 0.0
+        
+        if len(latest_two) > 1:
+            # Konwertujemy na Decimal dla precyzyjnych obliczeń
+            curr_val = Decimal(str(latest_two[0].price))
+            prev_val = Decimal(str(latest_two[1].price))
+            
+            diff = curr_val - prev_val
 
-    return latest_prices
+            if diff > 0:
+                trend = "up"
+                change = float(diff)
+            elif diff < 0:
+                trend = "down"
+                change = float(diff)
+
+        # DEBUG: Wypisz w konsoli co widzi serwer
+        print(f"Paliwo: {f_type}, Teraz: {current.price}, Poprzednio: {latest_two[1].price if len(latest_two)>1 else 'BRAK'}, Trend: {trend}")
+
+        results.append({
+            "id": current.id,
+            "station_id": current.station_id,
+            "fuel_type": current.fuel_type,
+            "price": float(current.price),
+            "created_at": current.created_at,
+            "updated_at": current.updated_at,
+            "trend": trend,
+            "change": change
+        })
+
+    return results

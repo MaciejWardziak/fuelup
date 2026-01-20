@@ -14,6 +14,8 @@ class FuelPriceRead(BaseModel):
     station_id: int
     fuel_type: str
     price: float
+    trend: str = "equal"
+    change: float = 0.0
     created_at: datetime
     updated_at: datetime
 

@@ -17,7 +17,7 @@ app.include_router(api_router)
 
 @app.get("/")
 def root():
-    return {"message": "Witaj w FuelUp"}
+    return {"message": "Witaj w FuelUp, spróbuj endpoint /docs."}
 
 @app.on_event("startup")
 def start_scheduler():
