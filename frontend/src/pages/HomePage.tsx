@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import type { StationFullData } from "../services/stationService";
 import { getAllStations } from "../services/stationService";
 import StationCard from "../components/StationCard";
+import StationMap from "../components/StationMap";
 
 const fuelOptions = [
   { value: "", label: "Wszystkie paliwa" },
@@ -35,7 +36,7 @@ export default function HomePage() {
     loadStations();
   }, []);
 
-  // Pomocnicza funkcja do wyciągania miasta z adresu (bezpieczna dla TS)
+  // Pomocnicza funkcja do wyciągania miasta z adresu
   const extractCity = (address: string | undefined): string => {
     if (!address) return "Nieznane";
     const parts = address.split(",");
@@ -101,7 +102,6 @@ export default function HomePage() {
     );
   }
 
-  // Tutaj używamy zmiennej 'error', aby błąd TS 6133 zniknął
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-blue-200">
@@ -121,7 +121,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-100 to-blue-200 py-8 px-4">
-      {/* Definicja animacji CSS wewnątrz pliku */}
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(15px); }
@@ -136,9 +135,8 @@ export default function HomePage() {
         Stacje paliw – aktualne ceny
       </h1>
 
-      {/* Kontenery filtrów */}
+      {/* 1. FILTRY */}
       <div className="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row justify-center items-end gap-6">
-        
         {/* Filtr Miast */}
         <div className="w-full md:w-72">
           <label className="block text-sm font-bold text-blue-900 mb-2 ml-1 uppercase tracking-wider">
@@ -177,7 +175,7 @@ export default function HomePage() {
           </select>
         </div>
 
-        {/* Resetowanie */}
+        {/* Przycisk resetu */}
         {(selectedCity || sortByFuel) && (
           <button
             onClick={() => { setSelectedCity(""); setSortByFuel(""); }}
@@ -188,6 +186,14 @@ export default function HomePage() {
         )}
       </div>
 
+      {/* 2. MAPA - Reaguje na filtry */}
+      <div className="max-w-7xl mx-auto mb-12 animate-card" style={{ animationDelay: '0.1s' }}>
+        <div className="bg-white p-2 rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+          <StationMap stations={filteredAndSortedStations} />
+        </div>
+      </div>
+
+      {/* 3. LISTA KART */}
       {filteredAndSortedStations.length === 0 ? (
         <div className="text-center py-24 animate-card">
           <p className="text-2xl text-gray-500 font-light">
@@ -196,10 +202,11 @@ export default function HomePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {filteredAndSortedStations.map((stationData) => (
+          {filteredAndSortedStations.map((stationData, index) => (
             <div 
               key={`${stationData.station.id}-${selectedCity}-${sortByFuel}`} 
               className="min-h-[800px] animate-card"
+              style={{ animationDelay: `${0.2 + (index * 0.05)}s` }}
             >
               <StationCard data={stationData} />
             </div>

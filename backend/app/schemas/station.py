@@ -27,6 +27,8 @@ class StationRead(BaseModel):
     id: int
     name: str
     address: Optional[str] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
     website_url: Optional[str] = None
     last_updated: Optional[datetime] = None
     scraper_config: Optional[Dict[str, Any]] = None

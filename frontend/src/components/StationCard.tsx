@@ -31,7 +31,6 @@ export default function StationCard({ data }: Props) {
 
   const formatTime = (time: string) => time.split(":").slice(0, 2).join(":");
 
-  // Funkcja formatująca datę z dodaniem +1h
   const formatDateWithOffset = (dateString: string) => {
     const date = new Date(dateString);
     date.setHours(date.getHours() + 1); // Korekta strefy czasowej
