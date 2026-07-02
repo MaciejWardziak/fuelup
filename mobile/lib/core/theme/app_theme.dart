@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Używamy schematu kolorów blue/indigo — pasuje do aplikacji paliwowej
   static const FlexScheme _scheme = FlexScheme.indigo;
 
   static ThemeData get light => FlexThemeData.light(

@@ -92,7 +92,6 @@ class _TrendIcon extends StatelessWidget {
   }
 }
 
-// Helper do sortowania cen po ustalonej kolejności
 List<FuelPrice> sortPrices(List<FuelPrice> prices) {
   final sorted = [...prices];
   sorted.sort((a, b) {

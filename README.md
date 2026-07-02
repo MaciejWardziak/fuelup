@@ -47,6 +47,9 @@ Mac/Linux:
 ```bash
 ./start_backend.sh
 ```
+> **Windows:** Jeśli PowerShell blokuje skrypty, uruchom najpierw:
+> `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+
 Backend dostępny pod: `http://localhost:8000`  
 Dokumentacja API: `http://localhost:8000/docs`
 
