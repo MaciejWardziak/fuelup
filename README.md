@@ -1,164 +1,76 @@
-# FuelUp – prototyp strony do sprawdzania cen paliw
+# FuelUp – aplikacja do sprawdzania cen paliw
 
-FuelUp to prototyp aplikacji webowej umożliwiającej sprawdzanie informacji o cenach paliw na konkretnych stacjach oraz w wybranych okolicach. Aplikacja składa się z **backendu FastAPI** oraz **frontendu React/Vite**.  
+FuelUp to aplikacja mobilna Flutter do sprawdzania cen paliw na lokalnych stacjach.
+Składa się z **backendu FastAPI + SQLite** oraz **aplikacji mobilnej Flutter**.
 
 ---
 
-## Pobranie repozytorium GitHub
-
-`git clone --branch develop https://github.com/MaciejWardziak/fuelup.git`
-
+## Struktura projektu
+fuelup/
+backend/    # FastAPI + SQLite + scraper cen paliw
+frontend/   # React/Vite (wersja webowa – branch develop)
+mobile/     # Flutter (wersja mobilna – branch mobile)
 
 ---
 
 ## Wymagania wstępne
 
-Przed uruchomieniem projektu należy upewnić się, że system posiada zainstalowane poniższe narzędzia. Komendy różnią się w zależności od dystrybucji Linuxa.
-
-### 1. Python 3.9+ i pip
-
-`python3 --version`
-`pip3 --version`
-
-Instalacja (Ubuntu/Debian):
-
-`sudo apt update && sudo apt install python3 python3-venv python3-pip -y`
-
-Instalacja (Fedora):
-
-`sudo dnf install python3 python3-venv python3-pip -y`
-
-
-### 2. Node.js i npm (zalecana wersja Node 20+)
-
-`node --version`
-`npm --version`
-
-Instalacja/aktualizacja (Ubuntu/Debian):
-
-`curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -`
-`sudo apt install -y nodejs`
-
-Instalacja/aktualizacja (Fedora):
-
-`sudo dnf module reset nodejs`
-`sudo dnf module enable nodejs:20`
-`sudo dnf install nodejs -y`
-
-
-### 3. Docker i Docker Compose
-
-`docker --version`
-`docker compose version`
-
-Instalacja (Ubuntu/Debian):
-
-`sudo apt update`
-`sudo apt install docker.io docker-compose -y`
-`sudo systemctl enable --now docker`
-
-Instalacja (Fedora):
-
-`sudo dnf install docker docker-compose -y`
-`sudo systemctl enable --now docker`
-
-
-### 4. GNOME Terminal (do uruchamiania backendu i frontendu w osobnych oknach)
-
-`gnome-terminal --version`
-
-Instalacja (Ubuntu/Debian):
-
-`sudo apt install gnome-terminal -y`
-
-Instalacja (Fedora):
-
-`sudo dnf install gnome-terminal -y`
-
-> Jeśli GNOME Terminal nie jest dostępny, backend i frontend można uruchomić ręcznie w osobnych terminalach.
-
-
-
-## Konfiguracja backendu
-
-1. Przejdź do folderu `backend`:
-
-`cd backend`
-
-
-2. Skopiuj plik `.env.example` do `.env`:
-
-`cp .env.example .env`
-
-
-3. Edytuj `.env`, jeśli trzeba zmienić dane połączenia z bazą PostgreSQL.  
-Przykładowe wartości:
-
-POSTGRES_USER=fuelup
-POSTGRES_PASSWORD=fuelup
-POSTGRES_DB=fuelup_db
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432 #lub 5433
-
+- Python 3.9+
+- Flutter SDK 3.10+
+- Android Studio (emulator Android)
 
 ---
 
-## Uruchomienie projektu
+## Uruchomienie backendu
 
-1. Wróć do folderu głównego projektu:
+### Pierwsze uruchomienie (setup)
 
-`cd ..`
+Windows (PowerShell):
+```powershell
+.\setup_backend.ps1
+```
 
+Mac/Linux:
+```bash
+chmod +x setup_backend.sh
+./setup_backend.sh
+```
 
-2. Nadaj uprawnienia do wykonywania skryptu:
+### Kolejne uruchomienia
 
-`chmod +x setup.sh`
+Windows:
+```powershell
+.\start_backend.ps1
+```
 
-
-3. Uruchom setup:
-
-`bash setup.sh`
-
-
-Skrypt uruchomi bazę danych, wirtualne środowisko, zainstaluje zależności, stworzy migracje i początkowe dane. Na koniec uruchomi backend i frontend.
-Po uruchomieniu backend będzie dostępny pod `http://localhost:8000`, a frontend pod adresem podanym przez Vite (domyślnie `http://localhost:5173`).
-
-Do kolejnych uruchomień, o ile nie zmieniłeś zależności, używaj `run.sh`.
-
-1. Pierw nadaj uprawnienia:
-
-`chmod +x run.sh`
-
-2. Później uruchom:
-
-`bash run.sh`
-
----
-
-## Ręczne uruchamianie backendu/frontendu (jeśli brak GNOME Terminal)
-
-### Backend
-
-`cd backend`
-`source venv/bin/activate`
-`uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
-
-
-### Frontend
-
-`cd frontend`
-`npm run dev`
-
+Mac/Linux:
+```bash
+./start_backend.sh
+```
+Backend dostępny pod: `http://localhost:8000`  
+Dokumentacja API: `http://localhost:8000/docs`
 
 ---
 
-## Uwagi
+## Uruchomienie aplikacji Flutter
 
-- Jeśli napotkasz problemy z wersją Node.js lub npm, upewnij się, że masz Node 20+.  
-- Nie jest wymagane wirtualne środowisko w folderze głównym – wszystkie zależności Pythona są w `backend/venv`.  
-- `setup.sh` automatyzuje większość kroków i otwiera backend oraz frontend w osobnych oknach GNOME Terminal.  
+```powershell
+cd mobile
+flutter pub get
+flutter run
+```
+
+> Upewnij się że backend działa przed uruchomieniem aplikacji.
+
+---
+
+## Konfiguracja
+
+Plik `backend/.env`:
+DATABASE_URL=sqlite:///./fuelup.db
 
 ---
 
 ## Autor
-- Projekt przygotowany przez [Maciej Wardziak]  
+
+Projekt przygotowany przez Maciej Wardziak
