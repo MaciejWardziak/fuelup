@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_
@@ -90,8 +90,13 @@ def get_stations(
         prices_map[s_id] = calculated_latest
 
     # 4. Przypisujemy przetworzone ceny do obiektów stacji
+    DAY_ORDER = ["mon", "tue", "wen", "thu", "fri", "sat", "sun"]
+
     for station in stations:
         station.prices = prices_map.get(station.id, [])
+        station.opening_hours.sort(
+            key=lambda h: DAY_ORDER.index(h.day_of_week) if h.day_of_week in DAY_ORDER else 99
+        )
 
     return stations
 

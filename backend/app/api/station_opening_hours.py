@@ -28,14 +28,16 @@ def create_opening_hours(
 
 
 # READ ALL dla danej stacji
+DAY_ORDER = ["mon", "tue", "wen", "thu", "fri", "sat", "sun"]
+
 @router.get("/{station_id}", response_model=List[StationOpeningHoursRead])
 def get_opening_hours_for_station(
-    station_id: int,
-    db: Session = Depends(get_db),
+        station_id: int,
+        db: Session = Depends(get_db),
 ):
     hours = db.query(StationOpeningHours).filter_by(station_id=station_id).all()
-    
-    return hours  
+    hours.sort(key=lambda h: DAY_ORDER.index(h.day_of_week) if h.day_of_week in DAY_ORDER else 99)
+    return hours
 
 
 @router.put("/{hours_id}", response_model=StationOpeningHoursRead)

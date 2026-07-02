@@ -25,7 +25,7 @@ def add_fuel_price(
 
     print(f"[DEBUG] Próba dodania ceny: station_id={station_id}, fuel_type={data.fuel_type}, price={data.price} (type: {type(data.price)})")
 
-    today_start = func.date_trunc('day', func.now())
+    today_start = datetime.combine(date.today(), datetime.min.time())
 
     existing_today = (
         db.query(FuelPrice)

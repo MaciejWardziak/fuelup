@@ -21,26 +21,29 @@ config = context.config
 fileConfig(config.config_file_name)
 
 def get_database_url():
-    driver = os.getenv("DB_DRIVER", "postgresql+psycopg2")
-    user = os.getenv("DB_USER", "fuelup_user")
-    password = os.getenv("DB_PASSWORD", "fuelup")
-    host = os.getenv("DB_HOST", "localhost")
-    port = os.getenv("DB_PORT", "5432")
-    db = os.getenv("DB_NAME", "fuelup_db")
-    return f"{driver}://{user}:{password}@{host}:{port}/{db}"
+    return os.getenv("DATABASE_URL", "sqlite:///./fuelup.db")
 
 config.set_main_option("sqlalchemy.url", get_database_url())
 
 def run_migrations_offline():
     url = config.get_main_option("sqlalchemy.url")
-    context.configure(url=url, target_metadata=target_metadata, literal_binds=True)
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        render_as_batch=True,
+    )
     with context.begin_transaction():
         context.run_migrations()
 
 def run_migrations_online():
     connectable = create_engine(config.get_main_option("sqlalchemy.url"), poolclass=pool.NullPool)
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            render_as_batch=True,
+        )
         with context.begin_transaction():
             context.run_migrations()
 

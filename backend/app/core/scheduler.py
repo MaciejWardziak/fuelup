@@ -1,7 +1,7 @@
 # app/core/scheduler.py
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.core.db import SessionLocal
@@ -73,7 +73,7 @@ def update_all_stations():
                     continue
 
                 # Początek dzisiejszego dnia w strefie bazy
-                today_start = func.date_trunc('day', func.now())
+                today_start = datetime.combine(date.today(), datetime.min.time())
 
                 station_updated = 0
                 station_added = 0
